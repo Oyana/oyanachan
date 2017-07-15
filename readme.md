@@ -19,9 +19,9 @@ In your `gulpfile.js`.
 	oyana( options );
 
 
-## Comand line:
+## Command line:
 
-| Comand | Efect | Alias |
+| Command | Effect | Alias |
 |--------|-------|-------|
 | `gulp js-compile` | Compile all js from `jsPath`  to `jsMinPath`. | `gulp js`, `gulp jquery`, `gulp script`  |
 | `gulp js-compile-silent` | Compile all js from `jsPath`  to `jsMinPath` without notification. |   |
@@ -29,5 +29,5 @@ In your `gulpfile.js`.
 | `gulp scss-compile-silent` | Compile all scss from `scssPath`  to `cssPath` in `outputStyle` without notification. |   |
 | `gulp watch` | Watch all scss, js and compile on update. |   |
 | `gulp watch-silent` | Watch all scss, js and compile on update without notification. |   |
-| `gulp oyana` | Compile all file then watch it. | `gulp` |
-| `gulp oyana-silent` | Compile all file then watch it without notification. | `gulp *` |
+| `gulp oyana` | Compile all files then watch it. | `gulp` |
+| `gulp oyana-silent` | Compile all files then watch it without notification. | `gulp *` |
