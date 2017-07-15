@@ -1,6 +1,6 @@
 {
 	"name": "gulp-oyana",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
@@ -30,10 +30,15 @@
 	},
 	"keywords": [
 		"oyana",
-		"compille",
+		"compile",
 		"watching",
 		"sass",
 		"js",
+		"notification",
+		"autoprefixer",
+		"concat",
+		"notify",
+		"uglify",
 		"listing"
 	],
 	"author": "Golga",
