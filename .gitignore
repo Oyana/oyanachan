@@ -1,0 +1,4 @@
+/node_modules/
+/public/css/*
+/public/js/*
+/config.php
