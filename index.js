@@ -150,10 +150,6 @@ module.exports = function( options ) {
 	gulp.task('default', ['oyana']);
 	gulp.task( '*', ['oyana-silent'] );
 
-	gulp.task( 'blackcoffee', ['black-coffee'] );
-	gulp.task( 'black-*', ['black-coffee'] );
-	gulp.task( 'black*', ['black-coffee'] );
-
 	gulp.task( 'hello', ['hello-world'] );
 	gulp.task( 'hi', ['hello-world'] );
 
