@@ -1,5 +1,4 @@
 module.exports = function( options ) {
-
 	var gulp = require('gulp');
 	var sass = require('gulp-sass');
 	var concat = require("gulp-concat");
@@ -30,13 +29,15 @@ module.exports = function( options ) {
 	}
 	else
 	{
+		var files = [
+			jsPath+'/*.js',
+			"!"+jsPath+'/main.min.js',
+			"!"+jsMinPath+'/main.min.js'
+		];
 		gulp.task('js-compile', function(){
-			var files = [
-				jsPath+'/*.js',
-				"!"+jsMinPath+'/main.min.js'
-			];
 			return gulp.src(files)
 				.pipe(plumber())
+				.pipe(concat('main.min.js'))
 				.pipe(uglify())
 				.pipe(gulp.dest(jsMinPath))
 				.pipe(notify({
@@ -48,9 +49,6 @@ module.exports = function( options ) {
 				}));
 		});
 		gulp.task('js-compile-silent', function(){
-			var files = [
-				jsPath+'/*.js'
-			];
 			return gulp.src(files)
 				.pipe(plumber())
 				.pipe(concat('main.min.js'))
@@ -69,8 +67,6 @@ module.exports = function( options ) {
 	else
 	{
 		gulp.task('scss-compile', function () {
-			console.log(scssPath);
-
 			return gulp.src(scssPath + '/**/*.scss')
 				.pipe(sass({
 					outputStyle: outputStyle
