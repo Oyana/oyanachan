@@ -12,6 +12,7 @@ In your `gulpfile.js`.
 	var options = {
 		"jsMinPath" : "./public/js",
 		"jsPath" : "./resources/js",
+		"jsName" : "main.min",
 		"cssPath" : "./public/css",
 		"scssPath" : "./resources/scss",
 		"outputStyle" : "compressed"

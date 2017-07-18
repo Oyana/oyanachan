@@ -9,6 +9,7 @@ module.exports = function( options ) {
 
 	var jsMinPath = options['jsMinPath'];
 	var jsPath = options['jsPath'];
+	var jsName = options['jsName'];
 	var cssPath = options['cssPath'];
 	var scssPath = options['scssPath'];
 	var outputStyle = options['outputStyle'];
@@ -18,6 +19,10 @@ module.exports = function( options ) {
 	if( outputStyle == undefined )
 	{
 		outputStyle = "nested";
+	}
+	if( jsName == undefined )
+	{
+		jsName = "main.min";
 	}
 
 	if( jsMinPath == undefined || jsMinPath == undefined )
@@ -31,13 +36,12 @@ module.exports = function( options ) {
 	{
 		var files = [
 			jsPath+'/*.js',
-			"!"+jsPath+'/main.min.js',
-			"!"+jsMinPath+'/main.min.js'
+			"!"+jsMinPath+'/'+jsName+'.js'
 		];
 		gulp.task('js-compile', function(){
 			return gulp.src(files)
 				.pipe(plumber())
-				.pipe(concat('main.min.js'))
+				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
 				.pipe(gulp.dest(jsMinPath))
 				.pipe(notify({
@@ -51,7 +55,7 @@ module.exports = function( options ) {
 		gulp.task('js-compile-silent', function(){
 			return gulp.src(files)
 				.pipe(plumber())
-				.pipe(concat('main.min.js'))
+				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
 				.pipe(gulp.dest(jsMinPath));
 		});
