@@ -6,6 +6,8 @@ module.exports = function( options ) {
 	var uglify = require("gulp-uglify");
 	var autoprefixer = require('gulp-autoprefixer');
 	var notify = require("gulp-notify");
+	var imagemin = require('gulp-imagemin');
+	var clean = require('gulp-dest-clean');
 
 	var jsMinPath = options['jsMinPath'];
 	var jsPath = options['jsPath'];
@@ -13,6 +15,8 @@ module.exports = function( options ) {
 	var cssPath = options['cssPath'];
 	var scssPath = options['scssPath'];
 	var outputStyle = options['outputStyle'];
+	var imgMinPath = options['imgMinPath'];
+	var imgPath = options['imgPath'];
 	var colorStart = "\x1b[36m";
 	var colorEnd = "\x1b[0m";
 
@@ -101,6 +105,44 @@ module.exports = function( options ) {
 		});
 	}
 
+	if( imgMinPath == undefined || imgMinPath == undefined )
+	{
+		gulp.task('img-minimize', function(){
+			console.log( colorStart + "[WARNING]" + colorEnd + " IMG path undefined. IMG minimization is " + colorStart + "disabled" + colorEnd);
+		});
+		gulp.task( 'img-minimize-silent', ['img-minimize'] );
+	}
+	else
+	{
+		var files = [
+			imgPath+'/*/*',
+			imgPath+'/*'
+		];
+		gulp.task('img-minimize', function(){
+			return gulp.src(imgPath)
+				.pipe(clean(imgMinPath));
+			gulp.src(files)
+				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
+				.pipe(gulp.dest(imgPath))
+				.pipe(notify({
+					title: "Images Minimized",
+					message: "Compiled file: <%= file.relative %> \n\r <%= options.date %>!",
+					templateOptions: {
+						date: new Date()
+					}
+				}));
+		});
+		gulp.task('img-minimize-silent', function(){
+			return gulp.src(imgPath)
+				.pipe(clean(imgMinPath));
+			gulp.src(files)
+				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
+				.pipe(gulp.dest(imgPath));
+		});
+	}
+
+
+
 	gulp.task('watch', function(){
 		gulp.src("")
 		.pipe(notify({
@@ -116,7 +158,12 @@ module.exports = function( options ) {
 		{
 			gulp.watch(jsPath+"/**/*.js", ['js-compile']);
 		}
+		if( imgPath != undefined && jsMinPath != undefined )
+		{
+			gulp.watch(imgPath+'/**/*', ['img-minimize']);
+		}
 	});
+
 	gulp.task('watch-silent', function(){
 		if( cssPath != undefined && scssPath != undefined )
 		{
@@ -125,6 +172,10 @@ module.exports = function( options ) {
 		if( jsMinPath != undefined && jsMinPath != undefined )
 		{
 			gulp.watch(jsPath+"/**/*.js", ['js-compile-silent']);
+		}
+		if( imgPath != undefined && jsMinPath != undefined )
+		{
+			gulp.watch(imgPath+'/**/*', ['img-minimize-silent']);
 		}
 	});
 
@@ -137,11 +188,11 @@ module.exports = function( options ) {
 		));
 	});
 
-	gulp.task('oyana', ['hi', 'js-compile-silent', 'scss-compile-silent', 'watch'], function()
+	gulp.task('oyana', ['hi', 'js-compile-silent', 'scss-compile-silent', 'img-minimize', 'watch'], function()
 	{
 		console.log('I can also make coffe...\n You can stop me with \x1b[36m [CTRL + C] \x1b[0m');
 	});
-	gulp.task('oyana-silent', ['js-compile-silent', 'scss-compile-silent', 'watch-silent'], function()
+	gulp.task('oyana-silent', ['js-compile-silent', 'scss-compile-silent', 'img-minimize-silent', 'watch-silent'], function()
 	{
 		console.log('I can also make black coffe...\n You can stop me with \x1b[36m [CTRL + C] \x1b[0m');
 	});
@@ -160,5 +211,10 @@ module.exports = function( options ) {
 	gulp.task( 'js', ['js-compile'] );
 	gulp.task( 'jquery', ['js-compile'] );
 	gulp.task( 'script', ['js-compile'] );
+
+	gulp.task( 'img', ['img-minimize'] );
+	gulp.task( 'image', ['img-minimize'] );
+	gulp.task( 'images', ['img-minimize'] );
+	gulp.task( 'minimize', ['img-minimize'] );
 }
 
