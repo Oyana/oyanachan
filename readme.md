@@ -16,8 +16,8 @@ In your `gulpfile.js`.
 		"cssPath" : "./public/css",
 		"scssPath" : "./resources/scss",
 		"outputStyle" : "compressed",
-		"imgPath" : "./storage/images",
-		"imgMinPath" : "development/images"
+		"imgMinPath" : "./public/img",
+		"imgPath" : "./resources/img"
 	}
 	oyana( options );
 

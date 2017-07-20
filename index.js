@@ -38,12 +38,12 @@ module.exports = function( options ) {
 	}
 	else
 	{
-		var files = [
+		var jsFiles = [
 			jsPath+'/*.js',
 			"!"+jsMinPath+'/'+jsName+'.js'
 		];
 		gulp.task('js-compile', function(){
-			return gulp.src(files)
+			return gulp.src(jsFiles)
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
@@ -57,7 +57,7 @@ module.exports = function( options ) {
 				}));
 		});
 		gulp.task('js-compile-silent', function(){
-			return gulp.src(files)
+			return gulp.src(jsFiles)
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
@@ -114,16 +114,16 @@ module.exports = function( options ) {
 	}
 	else
 	{
-		var files = [
+		var imgFiles = [
 			imgPath+'/*/*',
 			imgPath+'/*'
 		];
 		gulp.task('img-minimize', function(){
-			return gulp.src(imgPath)
+			gulp.src(imgPath)
 				.pipe(clean(imgMinPath));
-			gulp.src(files)
+			return gulp.src(imgFiles)
 				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
-				.pipe(gulp.dest(imgPath))
+				.pipe(gulp.dest(imgMinPath))
 				.pipe(notify({
 					title: "Images Minimized",
 					message: "Compiled file: <%= file.relative %> \n\r <%= options.date %>!",
@@ -133,11 +133,11 @@ module.exports = function( options ) {
 				}));
 		});
 		gulp.task('img-minimize-silent', function(){
-			return gulp.src(imgPath)
+			gulp.src(imgPath)
 				.pipe(clean(imgMinPath));
-			gulp.src(files)
+			return gulp.src(imgFiles)
 				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
-				.pipe(gulp.dest(imgPath));
+				.pipe(gulp.dest(imgMinPath));
 		});
 	}
 
@@ -188,7 +188,7 @@ module.exports = function( options ) {
 		));
 	});
 
-	gulp.task('oyana', ['hi', 'js-compile-silent', 'scss-compile-silent', 'img-minimize', 'watch'], function()
+	gulp.task('oyana', ['hi', 'js-compile-silent', 'scss-compile-silent', 'img-minimize-silent', 'watch'], function()
 	{
 		console.log('I can also make coffe...\n You can stop me with \x1b[36m [CTRL + C] \x1b[0m');
 	});
