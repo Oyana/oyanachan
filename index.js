@@ -8,6 +8,7 @@ module.exports = function( options ) {
 	var notify = require("gulp-notify");
 	var imagemin = require('gulp-imagemin');
 	var clean = require('gulp-dest-clean');
+	var browserSync = require('browser-sync').create();
 
 	var jsMinPath = options['jsMinPath'];
 	var jsPath = options['jsPath'];
@@ -17,6 +18,7 @@ module.exports = function( options ) {
 	var outputStyle = options['outputStyle'];
 	var imgMinPath = options['imgMinPath'];
 	var imgPath = options['imgPath'];
+	var proxyPath = options['proxyPath'];
 	var colorStart = "\x1b[36m";
 	var colorEnd = "\x1b[0m";
 
@@ -141,6 +143,11 @@ module.exports = function( options ) {
 		});
 	}
 
+	gulp.task('browser-sync', function() {
+		browserSync.init({
+			proxy: proxyPath
+		});
+	});
 
 
 	gulp.task('watch', function(){
@@ -152,15 +159,15 @@ module.exports = function( options ) {
 		));
 		if( cssPath != undefined && scssPath != undefined )
 		{
-			gulp.watch(scssPath+"/**/*.scss", ['scss-compile']);
+			gulp.watch(scssPath+"/**/*.scss", ['scss-compile', 'browser-sync']);
 		}
 		if( jsMinPath != undefined && jsMinPath != undefined )
 		{
-			gulp.watch(jsPath+"/**/*.js", ['js-compile']);
+			gulp.watch(jsPath+"/**/*.js", ['js-compile', 'browser-sync']);
 		}
 		if( imgPath != undefined && jsMinPath != undefined )
 		{
-			gulp.watch(imgPath+'/**/*', ['img-minimize']);
+			gulp.watch(imgPath+'/**/*', ['img-minimize', 'browser-sync']);
 		}
 	});
 
