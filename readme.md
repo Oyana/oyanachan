@@ -32,9 +32,9 @@ Use only the options you *need*!
 | `gulp js-compile-silent` | Compile all js from `jsPath`  to `jsMinPath` without notification. |   |
 | `gulp scss-compile` | Compile all scss from `scssPath`  to `cssPath` in `outputStyle`.| `gulp scss`, `gulp sass`, `gulp compass`, |
 | `gulp scss-compile-silent` | Compile all scss from `scssPath`  to `cssPath` in `outputStyle` without notification. |   |
-| `gulp img-minimize` | Minimiz all Images from `scssPath` to `scssPath`. | `gulp img`, `gulp image`, `gulp images`, `gulp minimize` |
-| `gulp img-minimize-silent` | Minimiz all Images from `scssPath` to `scssPath` without notification. | |
-| `gulp watch` | Watch all scss, js and compile on update. |   |
-| `gulp watch-silent` | Watch all scss, js and compile on update without notification. |   |
+| `gulp img-minimize` | Minimize all Images from `imgPath` to `imgMinPath`. | `gulp img`, `gulp image`, `gulp images`, `gulp minimize` |
+| `gulp img-minimize-silent` | Minimize all Images from `imgPath` to `imgMinPath` without notification. | |
+| `gulp watch` | Watch all scss, js, img and compile on update. |   |
+| `gulp watch-silent` | Watch all scss, js, img and compile on update without notification. |   |
 | `gulp oyana` | Compile all files then watch it. | `gulp` |
 | `gulp oyana-silent` | Compile all files then watch it without notification. | `gulp *` |
