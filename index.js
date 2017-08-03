@@ -44,7 +44,7 @@ module.exports = function( options ) {
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
-				.pipe(sourcemaps.write('.'));
+				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(jsMinPath))
 				.pipe(notify({
 					title: "JS Compiled",
@@ -60,7 +60,7 @@ module.exports = function( options ) {
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
-				.pipe(sourcemaps.write('.'));
+				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(jsMinPath));
 		});
 	}
@@ -84,7 +84,7 @@ module.exports = function( options ) {
 					browsers: ['last 10 versions', 'ie >= 10'],
 					cascade: true
 				}))
-				.pipe(sourcemaps.write('.'));
+				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(cssPath))
 				.pipe(notify({
 					title: "SCSS Compiled",
@@ -234,4 +234,3 @@ module.exports = function( options ) {
 	gulp.task( 'images', ['img-minimize'] );
 	gulp.task( 'minimize', ['img-minimize'] );
 }
-
