@@ -12,26 +12,17 @@ module.exports = function( options ) {
 
 	var jsMinPath = options['jsMinPath'];
 	var jsPath = options['jsPath'];
-	var jsName = options['jsName'];
+	var jsName = (options['jsName'] === undefined) ? "main.min" : options['jsName'];
 	var cssPath = options['cssPath'];
 	var scssPath = options['scssPath'];
-	var outputStyle = options['outputStyle'];
+	var outputStyle = (options['outputStyle'] === undefined) ? "nested" : options['outputStyle'];
 	var imgMinPath = options['imgMinPath'];
 	var imgPath = options['imgPath'];
 	var proxyPath = options['proxyPath'];
 	var colorStart = "\x1b[36m";
 	var colorEnd = "\x1b[0m";
 
-	if( outputStyle == undefined )
-	{
-		outputStyle = "nested";
-	}
-	if( jsName == undefined )
-	{
-		jsName = "main.min";
-	}
-
-	if( jsMinPath == undefined || jsMinPath == undefined )
+	if( jsPath === undefined || jsMinPath === undefined )
 	{
 		gulp.task('js-compile', function(){
 			console.log( colorStart + "[WARNING]" + colorEnd + " JS path undefined. JS compilation is " + colorStart + "disabled" + colorEnd);
@@ -41,6 +32,7 @@ module.exports = function( options ) {
 	else
 	{
 		var jsFiles = [
+			jsPath+'/*/*.js',
 			jsPath+'/*.js',
 			"!"+jsMinPath+'/'+jsName+'.js'
 		];
@@ -67,7 +59,7 @@ module.exports = function( options ) {
 		});
 	}
 
-	if( cssPath == undefined || scssPath == undefined )
+	if( cssPath === undefined || scssPath === undefined )
 	{
 		gulp.task('scss-compile', function(){
 			console.log( colorStart + "[WARNING]" + colorEnd + " SCSS path undefined. SCSS compilation is " + colorStart + "disabled" + colorEnd);
@@ -107,7 +99,7 @@ module.exports = function( options ) {
 		});
 	}
 
-	if( imgMinPath == undefined || imgMinPath == undefined )
+	if( imgPath === undefined || imgMinPath === undefined )
 	{
 		gulp.task('img-minimize', function(){
 			console.log( colorStart + "[WARNING]" + colorEnd + " IMG path undefined. IMG minimization is " + colorStart + "disabled" + colorEnd);
@@ -143,12 +135,14 @@ module.exports = function( options ) {
 		});
 	}
 
-	gulp.task('browser-sync', function() {
-		browserSync.init({
-			proxy: proxyPath
+	if (proxyPath !== undefined)
+	{
+		gulp.task('browser-sync', function() {
+			browserSync.init({
+				proxy: proxyPath
+			});
 		});
-	});
-
+	}
 
 	gulp.task('watch', function(){
 		gulp.src("")
@@ -157,32 +151,53 @@ module.exports = function( options ) {
 				message: "Im watching js & scss modification..."
 			}
 		));
-		if( cssPath != undefined && scssPath != undefined )
+		if( cssPath !== undefined && scssPath !== undefined )
 		{
-			gulp.watch(scssPath+"/**/*.scss", ['scss-compile', 'browser-sync']);
+			if( proxyPath !== undefined )
+			{
+				gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile', 'browser-sync']);
+			}
+			else
+			{
+				gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile']);
+			}
 		}
-		if( jsMinPath != undefined && jsMinPath != undefined )
+		if( jsPath !== undefined && jsMinPath !== undefined )
 		{
-			gulp.watch(jsPath+"/**/*.js", ['js-compile', 'browser-sync']);
+			if( proxyPath !== undefined )
+			{
+				gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile', 'browser-sync']);
+			}
+			else
+			{
+				gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile']);
+			}
 		}
-		if( imgPath != undefined && jsMinPath != undefined )
+		if( imgPath !== undefined && imgMinPath !== undefined )
 		{
-			gulp.watch(imgPath+'/**/*', ['img-minimize', 'browser-sync']);
+			if( proxyPath !== undefined )
+			{
+				gulp.watch([imgPath+"/*/*", imgPath+"/*/*"], ['img-minimize', 'browser-sync']);
+			}
+			else
+			{
+				gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize']);
+			}
 		}
 	});
 
 	gulp.task('watch-silent', function(){
 		if( cssPath != undefined && scssPath != undefined )
 		{
-			gulp.watch(scssPath+"/**/*.scss", ['scss-compile-silent']);
+			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile-silent']);
 		}
 		if( jsMinPath != undefined && jsMinPath != undefined )
 		{
-			gulp.watch(jsPath+"/**/*.js", ['js-compile-silent']);
+			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile-silent']);
 		}
-		if( imgPath != undefined && jsMinPath != undefined )
+		if( imgPath != undefined && imgMinPath != undefined )
 		{
-			gulp.watch(imgPath+'/**/*', ['img-minimize-silent']);
+			gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize-silent']);
 		}
 	});
 
