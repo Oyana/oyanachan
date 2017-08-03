@@ -135,7 +135,13 @@ module.exports = function( options ) {
 		});
 	}
 
-	if (proxyPath !== undefined)
+	if( proxyPath === undefined )
+	{
+		gulp.task('browser-sync', function(){
+			console.log( colorStart + "[WARNING]" + colorEnd + " proxy path undefined. Browser sync is " + colorStart + "disabled" + colorEnd);
+		});
+	}
+	else
 	{
 		gulp.task('browser-sync', function() {
 			browserSync.init({
@@ -153,51 +159,30 @@ module.exports = function( options ) {
 		));
 		if( cssPath !== undefined && scssPath !== undefined )
 		{
-			if( proxyPath !== undefined )
-			{
-				gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile', 'browser-sync']);
-			}
-			else
-			{
-				gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile']);
-			}
+			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile', 'browser-sync']);
 		}
 		if( jsPath !== undefined && jsMinPath !== undefined )
 		{
-			if( proxyPath !== undefined )
-			{
-				gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile', 'browser-sync']);
-			}
-			else
-			{
-				gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile']);
-			}
+			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile', 'browser-sync']);
 		}
 		if( imgPath !== undefined && imgMinPath !== undefined )
 		{
-			if( proxyPath !== undefined )
-			{
-				gulp.watch([imgPath+"/*/*", imgPath+"/*/*"], ['img-minimize', 'browser-sync']);
-			}
-			else
-			{
-				gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize']);
-			}
+			gulp.watch([imgPath+"/*/*", imgPath+"/*/*"], ['img-minimize', 'browser-sync']);
 		}
 	});
 
 	gulp.task('watch-silent', function(){
 		if( cssPath != undefined && scssPath != undefined )
 		{
-			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile-silent']);
+			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile-silent', 'browser-sync']);
 		}
 		if( jsMinPath != undefined && jsMinPath != undefined )
 		{
-			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile-silent']);
+			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile-silent', 'browser-sync']);
 		}
 		if( imgPath != undefined && imgMinPath != undefined )
 		{
-			gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize-silent']);
+			gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize-silent', 'browser-sync']);
 		}
 	});
 
