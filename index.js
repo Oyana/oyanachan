@@ -1,6 +1,7 @@
 module.exports = function( options ) {
 	var gulp = require('gulp');
 	var sass = require('gulp-sass');
+	var sourcemaps = require('gulp-sourcemaps');
 	var concat = require("gulp-concat");
 	var plumber = require("gulp-plumber");
 	var uglify = require("gulp-uglify");
@@ -15,6 +16,7 @@ module.exports = function( options ) {
 	var jsName = (options['jsName'] === undefined) ? "main.min" : options['jsName'];
 	var cssPath = options['cssPath'];
 	var scssPath = options['scssPath'];
+	// var sources = (options['outputStyle'] === undefined) ? true : options['sources'];
 	var outputStyle = (options['outputStyle'] === undefined) ? "nested" : options['outputStyle'];
 	var imgMinPath = options['imgMinPath'];
 	var imgPath = options['imgPath'];
@@ -38,9 +40,11 @@ module.exports = function( options ) {
 		];
 		gulp.task('js-compile', function(){
 			return gulp.src(jsFiles)
+				.pipe(sourcemaps.init())
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
+				.pipe(sourcemaps.write('.'));
 				.pipe(gulp.dest(jsMinPath))
 				.pipe(notify({
 					title: "JS Compiled",
@@ -52,9 +56,11 @@ module.exports = function( options ) {
 		});
 		gulp.task('js-compile-silent', function(){
 			return gulp.src(jsFiles)
+				.pipe(sourcemaps.init())
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
 				.pipe(uglify())
+				.pipe(sourcemaps.write('.'));
 				.pipe(gulp.dest(jsMinPath));
 		});
 	}
@@ -70,6 +76,7 @@ module.exports = function( options ) {
 	{
 		gulp.task('scss-compile', function () {
 			return gulp.src(scssPath + '/**/*.scss')
+				.pipe(sourcemaps.init())
 				.pipe(sass({
 					outputStyle: outputStyle
 				}).on('error', sass.logError))
@@ -77,6 +84,7 @@ module.exports = function( options ) {
 					browsers: ['last 10 versions', 'ie >= 10'],
 					cascade: true
 				}))
+				.pipe(sourcemaps.write('.'));
 				.pipe(gulp.dest(cssPath))
 				.pipe(notify({
 					title: "SCSS Compiled",
@@ -88,6 +96,7 @@ module.exports = function( options ) {
 		});
 		gulp.task('scss-compile-silent', function () {
 			return gulp.src(scssPath + '/**/*.scss')
+				.pipe(sourcemaps.init())
 				.pipe(sass({
 					outputStyle: outputStyle
 				}).on('error', sass.logError))
@@ -95,6 +104,7 @@ module.exports = function( options ) {
 					browsers: ['last 10 versions', 'ie >= 10'],
 					cascade: true
 				}))
+				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(cssPath));
 		});
 	}
@@ -154,7 +164,7 @@ module.exports = function( options ) {
 		gulp.src("")
 		.pipe(notify({
 				title: "Watch started",
-				message: "Im watching js & scss modification..."
+				message: "Im watching js , images & scss modification..."
 			}
 		));
 		if( cssPath !== undefined && scssPath !== undefined )
@@ -190,7 +200,7 @@ module.exports = function( options ) {
 		return gulp.src("./config.php")
 		.pipe(notify({
 				title: "Hi!",
-				message: "Wellcom on your project! \n Try to have fun! ;)"
+				message: "Wellcome on your project! \n Try to have fun! ;)"
 			}
 		));
 	});
