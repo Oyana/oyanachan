@@ -2,7 +2,15 @@
 
 ## How to install
 
-`npm install gulp-oyana --save-dev`.
+**If you havent gulp.**
+* Unix: `sudo npm install gulp -g`.
+* Windows: `npm install gulp -g`.
+
+**If you havent create your `package.json` yet.**
+* `npm init`
+
+**Install**
+* `npm install gulp-oyana --save-dev`.
 
 ## How to use
 
