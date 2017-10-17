@@ -2,3 +2,5 @@
 /public/css/*
 /public/js/*
 /config.php
+
+package-lock\.json

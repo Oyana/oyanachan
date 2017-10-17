@@ -1,4 +1,6 @@
 # ![Gulp-Oyana](gulp-oyana.png)
+> NPM 5.5.1
+> Gulp 3.9.1
 
 ## How to install
 
