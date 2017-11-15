@@ -1,60 +1,53 @@
 {
-	"name": "gulp-oyana",
-	"version": "0.7.0",
-	"description": "",
-	"main": "index.js",
-	"dependencies": {
-		"@babel/core": "^7.0.0-beta.32",
-		"@babel/preset-env": "^7.0.0-beta.32",
-		"browser-sync": "^2.18.13",
-		"gulp": "^3.9.1",
-		"gulp-autoprefixer": "^4.0.0",
-		"gulp-babel": "^7.0.0",
-		"gulp-concat": "^2.6.0",
-		"gulp-dest-clean": "^0.5.0",
-		"gulp-imagemin": "^3.4.0",
-		"gulp-notify": "^3.0.0",
-		"gulp-plumber": "^1.1.0",
-		"gulp-sass": "^3.1.0",
-		"gulp-sourcemaps": "^2.6.0",
-		"gulp-uglify": "^3.0.0"
-	},
-	"devDependencies": {
-		"@babel/core": "^7.0.0-beta.32",
-		"@babel/preset-env": "^7.0.0-beta.32",
-		"browser-sync": "^2.18.13",
-		"gulp": "^3.9.1",
-		"gulp-autoprefixer": "^4.0.0",
-		"gulp-babel": "^7.0.0",
-		"gulp-concat": "^2.6.0",
-		"gulp-dest-clean": "^0.5.0",
-		"gulp-imagemin": "^3.4.0",
-		"gulp-notify": "^3.0.0",
-		"gulp-plumber": "^1.1.0",
-		"gulp-sass": "^3.1.0",
-		"gulp-sourcemaps": "^2.6.0",
-		"gulp-uglify": "^3.0.0"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Oyana/gulp-oyana"
-	},
-	"keywords": [
-		"oyana",
-		"compile",
-		"watching",
-		"sass",
-		"js",
-		"notification",
-		"autoprefixer",
-		"concat",
-		"notify",
-		"uglify",
-		"listing"
-	],
-	"author": "Golga",
-	"license": "GPL-3.0"
+  "name": "gulp-oyana",
+  "version": "0.7.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+	"browser-sync": "^2.18.13",
+	"gulp": "^3.9.1",
+	"gulp-autoprefixer": "^4.0.0",
+	"gulp-concat": "^2.6.0",
+	"gulp-dest-clean": "^0.5.0",
+	"gulp-imagemin": "^3.4.0",
+	"gulp-notify": "^3.0.0",
+	"gulp-plumber": "^1.1.0",
+	"gulp-sass": "^3.1.0",
+	"gulp-uglify": "^3.0.0"
+  },
+  "devDependencies": {
+	"browser-sync": "^2.18.13",
+	"gulp": "^3.9.1",
+	"gulp-autoprefixer": "^4.0.0",
+	"gulp-concat": "^2.6.0",
+	"gulp-dest-clean": "^0.5.0",
+	"gulp-imagemin": "^3.4.0",
+	"gulp-notify": "^3.0.0",
+	"gulp-plumber": "^1.1.0",
+	"gulp-sass": "^3.1.0",
+	"gulp-sourcemaps": "^2.6.0",
+	"gulp-uglify": "^3.0.0"
+  },
+  "scripts": {
+	"test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Oyana/gulp-oyana"
+  },
+  "keywords": [
+	"oyana",
+	"compile",
+	"watching",
+	"sass",
+	"js",
+	"notification",
+	"autoprefixer",
+	"concat",
+	"notify",
+	"uglify",
+	"listing"
+  ],
+  "author": "Golga",
+  "license": "GPL-3.0"
 }

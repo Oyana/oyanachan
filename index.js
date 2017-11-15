@@ -5,7 +5,6 @@ module.exports = function( options ) {
 	var concat = require("gulp-concat");
 	var plumber = require("gulp-plumber");
 	var uglify = require("gulp-uglify");
-	var babel = require('gulp-babel');
 	var autoprefixer = require('gulp-autoprefixer');
 	var notify = require("gulp-notify");
 	var imagemin = require('gulp-imagemin');
@@ -44,9 +43,6 @@ module.exports = function( options ) {
 				.pipe(sourcemaps.init())
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
-				.pipe(babel({
-					presets: ['@babel/env']
-				}))
 				.pipe(uglify())
 				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(jsMinPath))
@@ -63,9 +59,6 @@ module.exports = function( options ) {
 				.pipe(sourcemaps.init())
 				.pipe(plumber())
 				.pipe(concat(jsName+'.js'))
-				.pipe(babel({
-					presets: ['@babel/env']
-				}))
 				.pipe(uglify())
 				.pipe(sourcemaps.write('.'))
 				.pipe(gulp.dest(jsMinPath));
