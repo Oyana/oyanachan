@@ -48,3 +48,7 @@ Use only the options you *need*!
 | `gulp watch-silent` | Watch all scss, js, img and compile on update without notification. |   |
 | `gulp oyana` | Compile all files then watch it. | `gulp` |
 | `gulp oyana-silent` | Compile all files then watch it without notification. | `gulp *` |
+
+## Any issue with SCSS compilation?
+
+[Gulp SASS common issues-and their fixes](https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#partials-sporadically-not-found)
