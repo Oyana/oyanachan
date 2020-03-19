@@ -11,6 +11,8 @@ module.exports = function( options ) {
 	const imagemin = require('gulp-imagemin');
 	const clean = require('gulp-dest-clean');
 	const browserSync = require('browser-sync').create();
+	const babel = require('gulp-babel');
+	const htmlmin = require('gulp-htmlmin');
 	const jsMinPath = options['jsMinPath'];
 	const jsPath = options['jsPath'];
 	const jsName = (options['jsName'] === undefined) ? 'main.min' : options['jsName'];
@@ -139,6 +141,9 @@ module.exports = function( options ) {
 				'!' + jsMinPath + '/' + jsName + '.js'
 			];
 			return gulp.src(jsFiles)
+				.pipe(babel({
+					presets: ['@babel/env']
+				}))
 				.pipe( sourcemaps.init() )
 				.pipe( plumber() )
 				.pipe( concat( jsName + '.js' ) )
