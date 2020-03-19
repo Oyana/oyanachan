@@ -277,14 +277,17 @@ module.exports = function( options ) {
 					])
 				);
 			}
-			if( options['htmlPages'] === undefined || options['htmlMinPath'] === undefined || options['htmlPath'] === undefined )
+			if( options['htmlPages'] !== undefined || options['htmlMinPath'] !== undefined || options['htmlPath'] !== undefined )
 			{
 				gulp.watch(
 					[
 						options['htmlPath'] + '/*/*.html',
 						options['htmlPath'] + '/*.html',
 						options['htmlPath'] + '/*/*.htm',
+						options['htmlPath'] + '/*.htm',
+						options['htmlPath'] + '/*/*.txt',
 						options['htmlPath'] + '/*.txt',
+						options['htmlPath'] + '/*/*.svg',
 						options['htmlPath'] + '/*.svg'
 					],
 					gulp.series([
