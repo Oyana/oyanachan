@@ -30,7 +30,7 @@ In your `gulpfile.js`.
 > Use only the options you **need**!
 
 ```javascript
-	var oyana = require('oyanachan');
+	const oyana = require('oyanachan');
 
 	oyana({
 		'jsMinPath' : './public/js',
