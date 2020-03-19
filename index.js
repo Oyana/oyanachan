@@ -1,236 +1,335 @@
 module.exports = function( options ) {
-	var gulp = require('gulp');
-	var sass = require('gulp-sass');
-	var sourcemaps = require('gulp-sourcemaps');
-	var concat = require("gulp-concat");
-	var plumber = require("gulp-plumber");
-	var uglify = require("gulp-uglify");
-	var autoprefixer = require('gulp-autoprefixer');
-	var notify = require("gulp-notify");
-	var imagemin = require('gulp-imagemin');
-	var clean = require('gulp-dest-clean');
-	var browserSync = require('browser-sync').create();
+	const { src, dest, parallel } = require('gulp');
+	const gulp = require('gulp');
+	const sass = require('gulp-sass');
+	const sourcemaps = require('gulp-sourcemaps');
+	const concat = require("gulp-concat");
+	const plumber = require("gulp-plumber");
+	const uglify = require("gulp-uglify");
+	const autoprefixer = require('gulp-autoprefixer');
+	const notify = require("gulp-notify");
+	const imagemin = require('gulp-imagemin');
+	const clean = require('gulp-dest-clean');
+	const browserSync = require('browser-sync').create();
+	const jsMinPath = options['jsMinPath'];
+	const jsPath = options['jsPath'];
+	const jsName = (options['jsName'] === undefined) ? 'main.min' : options['jsName'];
+	const cssPath = options['cssPath'];
+	const scssPath = options['scssPath'];
+	const sources = (options['outputStyle'] === undefined) ? true : options['sources'];
+	const outputStyle = (options['outputStyle'] === undefined) ? 'nested' : options['outputStyle'];
+	const imgMinPath = options['imgMinPath'];
+	const imgPath = options['imgPath'];
+	const proxyPath = options['proxyPath'];
+	const colorStart = '\x1b[36m';
+	const colorEnd = '\x1b[0m';
+	const defaultPath = './gulpfile.js'; // default path is used to trigger a radom gulp call back to use notify easyer
 
-	var jsMinPath = options['jsMinPath'];
-	var jsPath = options['jsPath'];
-	var jsName = (options['jsName'] === undefined) ? "main.min" : options['jsName'];
-	var cssPath = options['cssPath'];
-	var scssPath = options['scssPath'];
-	// var sources = (options['outputStyle'] === undefined) ? true : options['sources'];
-	var outputStyle = (options['outputStyle'] === undefined) ? "nested" : options['outputStyle'];
-	var imgMinPath = options['imgMinPath'];
-	var imgPath = options['imgPath'];
-	var proxyPath = options['proxyPath'];
-	var colorStart = "\x1b[36m";
-	var colorEnd = "\x1b[0m";
-
-	if( jsPath === undefined || jsMinPath === undefined )
-	{
-		gulp.task('js-compile', function(){
-			console.log( colorStart + "[WARNING]" + colorEnd + " JS path undefined. JS compilation is " + colorStart + "disabled" + colorEnd);
-		});
-		gulp.task( 'js-compile-silent', ['js-compile'] );
+	/**
+	 * @author Golga <r-ro@bulko.net>
+	 * @since 0.8.0 ( 2020-03-19 )
+	 *
+	 * @return GulpCB
+	 */
+	let defaultCB = () => {
+		return gulp.src( defaultPath );
 	}
-	else
-	{
-		var jsFiles = [
-			jsPath+'/*/*.js',
-			jsPath+'/*.js',
-			"!"+jsMinPath+'/'+jsName+'.js'
-		];
-		gulp.task('js-compile', function(){
+	/**
+	 * @author Golga <r-ro@bulko.net>
+	 * @since 0.8.0 ( 2020-03-19 )
+	 *
+	 * @param GulpCB tcb
+	 * @param String notifyTitle
+	 * @param String notifyBody
+	 * @return Void
+	 */
+	let notifyBuilder = ( tcb, notifyTitle, notifyBody ) => {
+		tcb.pipe(
+			notify({
+				title: notifyTitle,
+				message: notifyBody,
+				templateOptions: {
+					date: new Date()
+				}
+			})
+		);
+	}
+	/**
+	 * @author Golga <r-ro@bulko.net>
+	 * @since 0.8.0 ( 2020-03-19 )
+	 *
+	 * @param String taskName
+	 * @param Function task
+	 * @param Bool || Function taskDisabled
+	 * @param String notifyTitle
+	 * @param String notifyBody
+	 * @return Void
+	 */
+	let taskBuilder = ( taskName, task, taskDisabled, notifyTitle, notifyBody ) => {
+		if( taskDisabled )
+		{
+			gulp.task( taskName, cb => {
+				console.log(
+					colorStart
+					+ '[WARNING]'
+					+ colorEnd
+					+ ' Due to curent configuration '
+					+ taskName
+					+ ' is curently '
+					+ colorStart
+					+ 'disabled'
+					+ colorEnd
+				);
+				cb();
+			});
+			gulp.task( taskName + '-silent', gulp.parallel( [ taskName ] ) );
+		}
+		else
+		{
+			if ( notifyTitle !== undefined && notifyBody !== undefined )
+			{
+				gulp.task( taskName + '-silent', cb => {
+					task();
+					cb();
+				});
+				gulp.task( taskName, cb => {
+					const tcb = task()
+					tcb.pipe( notify( {
+						title: notifyTitle,
+						message: notifyBody,
+						templateOptions: {
+							date: new Date()
+						}
+					}));
+					cb();
+				});
+			}
+			else
+			{
+				gulp.task( taskName, cb => {
+					task();
+					cb();
+				});
+			}
+		}
+	}
+	/**
+	 * @author Golga <r-ro@bulko.net>
+	 * @since 0.8.0 ( 2020-03-19 )
+	 *
+	 * @param String taskName
+	 * @param Array taskList
+	 * @return Void
+	 */
+	let aliasBuilder = ( taskName, taskList ) => {
+		gulp.task(
+			taskName,
+			gulp.parallel([ taskList ]), cb => {
+				cb();
+			}
+		);
+	}
+
+	taskBuilder(
+		'js-compile',
+		() => {
+			const jsFiles = [
+				jsPath + '/*/*.js',
+				jsPath + '/*.js',
+				'!' + jsMinPath + '/' + jsName + '.js'
+			];
 			return gulp.src(jsFiles)
-				.pipe(sourcemaps.init())
-				.pipe(plumber())
-				.pipe(concat(jsName+'.js'))
-				.pipe(uglify())
-				.pipe(sourcemaps.write('.'))
-				.pipe(gulp.dest(jsMinPath))
-				.pipe(notify({
-					title: "JS Compiled",
-					message: "Compiled file: <%= file.relative %> \n\r <%= options.date %>!",
-					templateOptions: {
-						date: new Date()
-					}
-				}));
-		});
-		gulp.task('js-compile-silent', function(){
-			return gulp.src(jsFiles)
-				.pipe(sourcemaps.init())
-				.pipe(plumber())
-				.pipe(concat(jsName+'.js'))
-				.pipe(uglify())
-				.pipe(sourcemaps.write('.'))
-				.pipe(gulp.dest(jsMinPath));
-		});
-	}
+				.pipe( sourcemaps.init() )
+				.pipe( plumber() )
+				.pipe( concat( jsName + '.js' ) )
+				.pipe( uglify() )
+				.pipe( sourcemaps.write( '.' ) )
+				.pipe( gulp.dest( jsMinPath ) ) ;
+		},
+		( jsPath === undefined || jsMinPath === undefined ),
+		'JS Compiled',
+		'Compiled file: <%= file.relative %> \n\r <%= options.date %>!'
+	);
 
-	if( cssPath === undefined || scssPath === undefined )
-	{
-		gulp.task('scss-compile', function(){
-			console.log( colorStart + "[WARNING]" + colorEnd + " SCSS path undefined. SCSS compilation is " + colorStart + "disabled" + colorEnd);
-		});
-		gulp.task( 'scss-compile-silent', ['scss-compile'] );
-	}
-	else
-	{
-		gulp.task('scss-compile', function () {
-			return gulp.src(scssPath + '/**/*.scss')
-				.pipe(sourcemaps.init())
-				.pipe(sass({
-					outputStyle: outputStyle
-				}).on('error', sass.logError))
-				.pipe(autoprefixer({
-					browsers: ['last 10 versions', 'ie >= 10'],
-					cascade: true
-				}))
-				.pipe(sourcemaps.write('.'))
-				.pipe(gulp.dest(cssPath))
-				.pipe(notify({
-					title: "SCSS Compiled",
-					message: "Compiled file: <%= file.relative %> \n\r <%= options.date %>!",
-					templateOptions: {
-						date: new Date()
-					}
-				}));
-		});
-		gulp.task('scss-compile-silent', function () {
-			return gulp.src(scssPath + '/**/*.scss')
-				.pipe(sourcemaps.init())
-				.pipe(sass({
-					outputStyle: outputStyle
-				}).on('error', sass.logError))
-				.pipe(autoprefixer({
-					browsers: ['last 10 versions', 'ie >= 10'],
-					cascade: true
-				}))
-				.pipe(sourcemaps.write('.'))
-				.pipe(gulp.dest(cssPath));
-		});
-	}
+	taskBuilder(
+		'scss-compile',
+		() => {
+			return gulp.src( scssPath + '/**/*.scss' )
+				.pipe( sourcemaps.init() )
+				.pipe(
+					sass({
+						outputStyle: outputStyle
+					})
+					.on( 'error', sass.logError )
+				)
+				.pipe(
+					autoprefixer({
+						cascade: true
+					})
+				)
+				.pipe( sourcemaps.write( '.' ) )
+				.pipe( gulp.dest( cssPath ) );
+		},
+		( cssPath === undefined || scssPath === undefined ),
+		'SCSS Compiled',
+		'Compiled file: <%= file.relative %> \n\r <%= options.date %>!'
+	);
 
-	if( imgPath === undefined || imgMinPath === undefined )
-	{
-		gulp.task('img-minimize', function(){
-			console.log( colorStart + "[WARNING]" + colorEnd + " IMG path undefined. IMG minimization is " + colorStart + "disabled" + colorEnd);
-		});
-		gulp.task( 'img-minimize-silent', ['img-minimize'] );
-	}
-	else
-	{
-		var imgFiles = [
-			imgPath+'/*/*',
-			imgPath+'/*'
-		];
-		gulp.task('img-minimize', function(){
-			gulp.src(imgPath)
-				.pipe(clean(imgMinPath));
-			return gulp.src(imgFiles)
-				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
-				.pipe(gulp.dest(imgMinPath))
-				.pipe(notify({
-					title: "Images Minimized",
-					message: "Compiled file: <%= file.relative %> \n\r <%= options.date %>!",
-					templateOptions: {
-						date: new Date()
-					}
-				}));
-		});
-		gulp.task('img-minimize-silent', function(){
-			gulp.src(imgPath)
-				.pipe(clean(imgMinPath));
-			return gulp.src(imgFiles)
-				.pipe(imagemin([imagemin.gifsicle(), imagemin.jpegtran(), imagemin.optipng(), imagemin.svgo()]))
-				.pipe(gulp.dest(imgMinPath));
-		});
-	}
+	taskBuilder(
+		'img-minimize',
+		() => {
+			const imgFiles = [
+				imgPath + '/*/*',
+				imgPath + '/*'
+			];
+			gulp.src( imgPath )
+				.pipe( clean( imgMinPath ) );
+			return gulp.src( imgFiles )
+				.pipe( imagemin( [
+					imagemin.gifsicle({
+						interlaced: true,
+						optimizationLevel: 3
+					}),
+					imagemin.mozjpeg({
+						quality: 75,
+						progressive: true
+					}),
+					imagemin.optipng({
+						optimizationLevel: 5,
+						interlaced: true
+					}),
+					imagemin.svgo({
+						plugins: [
+							{removeViewBox: true},
+							{cleanupIDs: false}
+						]
+					})
+				]))
+				.pipe( gulp.dest( imgMinPath ) );
+		},
+		( imgPath === undefined || imgMinPath === undefined ),
+		'Images Minimized',
+		'Optimized file: <%= file.relative %> \n\r <%= options.date %>!'
+	);
 
-	if( proxyPath === undefined )
-	{
-		gulp.task('browser-sync', function(){
-			console.log( colorStart + "[WARNING]" + colorEnd + " proxy path undefined. Browser sync is " + colorStart + "disabled" + colorEnd);
-		});
-	}
-	else
-	{
-		gulp.task('browser-sync', function() {
-			browserSync.init({
+	taskBuilder(
+		'browser-sync',
+		() => {
+			return browserSync.init({
 				proxy: proxyPath
 			});
-		});
-	}
+		},
+		( proxyPath === undefined )
+	);
 
-	gulp.task('watch', function(){
-		gulp.src("")
-		.pipe(notify({
-				title: "Watch started",
-				message: "Im watching js , images & scss modification..."
+	taskBuilder(
+		'watch',
+		() => {
+			if( cssPath !== undefined && scssPath !== undefined )
+			{
+				gulp.watch(
+					[
+						scssPath + '/*/*.scss',
+						scssPath + '/*.scss'
+					],
+					gulp.series([
+						'scss-compile',
+						'browser-sync'
+					])
+				);
 			}
-		));
-		if( cssPath !== undefined && scssPath !== undefined )
-		{
-			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile', 'browser-sync']);
-		}
-		if( jsPath !== undefined && jsMinPath !== undefined )
-		{
-			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile', 'browser-sync']);
-		}
-		if( imgPath !== undefined && imgMinPath !== undefined )
-		{
-			gulp.watch([imgPath+"/*/*", imgPath+"/*/*"], ['img-minimize', 'browser-sync']);
-		}
-	});
-
-	gulp.task('watch-silent', function(){
-		if( cssPath != undefined && scssPath != undefined )
-		{
-			gulp.watch([scssPath+"/*/*.scss", scssPath+"/*.scss"], ['scss-compile-silent', 'browser-sync']);
-		}
-		if( jsMinPath != undefined && jsMinPath != undefined )
-		{
-			gulp.watch([jsPath+"/*/*.js", jsPath+"/*.js"], ['js-compile-silent', 'browser-sync']);
-		}
-		if( imgPath != undefined && imgMinPath != undefined )
-		{
-			gulp.watch([imgPath+"/*/*", imgPath+"/*"], ['img-minimize-silent', 'browser-sync']);
-		}
-	});
-
-	gulp.task('hello-world', function(){
-		return gulp.src("./config.php")
-		.pipe(notify({
-				title: "Hi!",
-				message: "Wellcome on your project! \n Try to have fun! ;)"
+			if( jsPath !== undefined && jsMinPath !== undefined )
+			{
+				gulp.watch(
+					[
+						jsPath + '/*/*.js',
+						jsPath + '/*.js'
+					],
+					gulp.series([
+						'js-compile',
+						'browser-sync'
+					])
+				);
 			}
-		));
-	});
+			if( imgPath !== undefined && imgMinPath !== undefined )
+			{
+				gulp.watch(
+					[
+						imgPath + '/*/*',
+						imgPath + '/*'
+					],
+					gulp.series([
+						'img-minimize',
+						'browser-sync'
+					])
+				);
+			}
+			return defaultCB();
+		},
+		( proxyPath === undefined ),
+		'Watch started',
+		'Im watching for any assets modification.'
+	);
 
-	gulp.task('oyana', ['hi', 'js-compile-silent', 'scss-compile-silent', 'img-minimize-silent', 'watch'], function()
-	{
-		console.log('I can also make coffe...\n You can stop me with \x1b[36m [CTRL + C] \x1b[0m');
-	});
-	gulp.task('oyana-silent', ['js-compile-silent', 'scss-compile-silent', 'img-minimize-silent', 'watch-silent'], function()
-	{
-		console.log('I can also make black coffe...\n You can stop me with \x1b[36m [CTRL + C] \x1b[0m');
-	});
+	taskBuilder(
+		'hello-world',
+		() => {
+			return defaultCB();
+		},
+		false,
+		'Hi!',
+		'Wellcome on your project! \n\r Try to have fun! ;)'
+	);
+
+	taskBuilder(
+		'cofee',
+		() => {
+			return defaultCB();
+		},
+		false,
+		'I can also make coffe...',
+		'You can stop me using ' + colorStart + '[CTRL + C]' + colorEnd
+	);
 
 	/*Alias zone*/
-	gulp.task('default', ['oyana']);
-	gulp.task( '*', ['oyana-silent'] );
+	aliasBuilder(
+		'oyana',
+		[
+			'js-compile-silent',
+			'scss-compile-silent',
+			'img-minimize-silent',
+			'watch-silent'
+			'cofee',
+		]
+	);
 
-	gulp.task( 'hello', ['hello-world'] );
-	gulp.task( 'hi', ['hello-world'] );
+	aliasBuilder(
+		'oyana-silent',
+		[
+			'js-compile-silent',
+			'scss-compile-silent',
+			'img-minimize-silent',
+			'watch-silent'
+		]
+	);
 
-	gulp.task( 'scss', ['scss-compile'] );
-	gulp.task( 'sass', ['scss-compile'] );
-	gulp.task( 'compass', ['scss-compile'] );
+	aliasBuilder( 'default', ['oyana'] );
+	aliasBuilder( 'oyanachan', ['oyana'] );
+	aliasBuilder( '*', ['oyana-silent'] );
 
-	gulp.task( 'js', ['js-compile'] );
-	gulp.task( 'jquery', ['js-compile'] );
-	gulp.task( 'script', ['js-compile'] );
+	aliasBuilder( 'hello', ['hello-world'] );
+	aliasBuilder( 'hi', ['hello-world'] );
 
-	gulp.task( 'img', ['img-minimize'] );
-	gulp.task( 'image', ['img-minimize'] );
-	gulp.task( 'images', ['img-minimize'] );
-	gulp.task( 'minimize', ['img-minimize'] );
+	aliasBuilder( 'scss', ['scss-compile'] );
+	aliasBuilder( 'sass', ['scss-compile'] );
+	aliasBuilder( 'compass', ['scss-compile'] );
+
+	aliasBuilder( 'js', ['js-compile'] );
+	aliasBuilder( 'jquery', ['js-compile'] );
+	aliasBuilder( 'script', ['js-compile'] );
+
+	aliasBuilder( 'img', ['img-minimize'] );
+	aliasBuilder( 'image', ['img-minimize'] );
+	aliasBuilder( 'images', ['img-minimize'] );
+	aliasBuilder( 'minimize', ['img-minimize'] );
 }

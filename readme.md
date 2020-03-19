@@ -1,6 +1,14 @@
-# ![Gulp-Oyana](gulp-oyana.png)
-> NPM 5.5.1
-> Gulp 3.9.1
+# OyanaChan
+
+**The quick & easy way to compile basic website** (js, scss, imgs, svg)
+
+
+> OyanaChan is a rebuild version of [gulp-oyana](https://github.com/Oyana/oyanachan/tree/gulp-oyana).
+OyanaChan is made for:
+* Node > 12
+* NPM > 6
+* Gulp > 4
+If you have to used older teck please consider used [gulp-oyana](https://github.com/Oyana/oyanachan/tree/gulp-oyana) insted.
 
 ## How to install
 
@@ -12,13 +20,13 @@
 * `npm init`
 
 **Install**
-* `npm install gulp-oyana --save-dev`.
+* `npm install oyanachan --save-dev`.
 
 ## How to use
 
 In your `gulpfile.js`.
 
-	var oyana = require('gulp-oyana');
+	var oyana = require('oyanachan');
 	var options = {
 		"jsMinPath" : "./public/js",
 		"jsPath" : "./resources/js",
@@ -46,7 +54,7 @@ Use only the options you *need*!
 | `gulp img-minimize-silent` | Minimize all Images from `imgPath` to `imgMinPath` without notification. | |
 | `gulp watch` | Watch all scss, js, img and compile on update. |   |
 | `gulp watch-silent` | Watch all scss, js, img and compile on update without notification. |   |
-| `gulp oyana` | Compile all files then watch it. | `gulp` |
+| `gulp oyana` | Compile all files then watch it. | `gulp` `gulp oyanachan` |
 | `gulp oyana-silent` | Compile all files then watch it without notification. | `gulp *` |
 
 ## Any issue with SCSS compilation?
