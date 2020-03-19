@@ -69,6 +69,8 @@ In your `gulpfile.js`.
 | `gulp js-compile-silent` | Compile all js from `jsPath`  to `jsMinPath` without notification. |   |
 | `gulp scss-compile` | Compile all scss from `scssPath`  to `cssPath` in `outputStyle`.| `gulp scss`, `gulp sass`, `gulp compass`, |
 | `gulp scss-compile-silent` | Compile all scss from `scssPath`  to `cssPath` in `outputStyle` without notification. |   |
+| `gulp html-compile` | Compile all html, svg, html, plain text from `htmlPath`  to `htmlMinPath` you have to customise the hiercht throuw `htmlPages`.|   |
+| `gulp html-compile-silent` | Compile all html, svg, html, plain text from `htmlPath`  to `htmlMinPath` you have to customise the hiercht throuw `htmlPages` without notification. |   |
 | `gulp img-minimize` | Minimize all Images from `imgPath` to `imgMinPath`. | `gulp img`, `gulp image`, `gulp images`, `gulp minimize` |
 | `gulp img-minimize-silent` | Minimize all Images from `imgPath` to `imgMinPath` without notification. | |
 | `gulp watch` | Watch all scss, js, img and compile on update. |   |
