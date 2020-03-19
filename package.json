@@ -1,6 +1,6 @@
 {
 	"name": "oyanachan",
-	"version": "1.2.0",
+	"version": "1.2.2",
 	"description": "The quick & easy way to compile basic website",
 	"main": "index.js",
 	"dependencies": {

@@ -175,11 +175,16 @@ module.exports = function( options ) {
 	);
 
 	taskBuilder(
-		'html-concat',
+		'html-compile',
 		() => {
 			for ( let key in options['htmlPages'] )
 			{
-				gulp.src( options['htmlPath'] + options['htmlPages'][key] )
+				let pages = [];
+				for ( let key2 in options['htmlPages'][key] )
+				{
+					pages[key2] = options['htmlPath'] + '/' + options['htmlPages'][key][key2];
+				}
+				gulp.src( pages )
 					.pipe( plumber() )
 					.pipe( concat( key ) )
 					.pipe(
@@ -240,7 +245,7 @@ module.exports = function( options ) {
 				proxy: options['imgPath']
 			});
 		},
-		( options['imgPath'] === undefined )
+		( options['proxyPath'] === undefined )
 	);
 
 	taskBuilder(
@@ -303,7 +308,7 @@ module.exports = function( options ) {
 			}
 			return defaultCB();
 		},
-		( options['imgPath'] === undefined ),
+		false,
 		'Watch started',
 		'Im watching for any assets modification.'
 	);
