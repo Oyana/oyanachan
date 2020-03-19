@@ -13,16 +13,10 @@ module.exports = function( options ) {
 	const browserSync = require('browser-sync').create();
 	const babel = require('gulp-babel');
 	const htmlmin = require('gulp-htmlmin');
-	const jsMinPath = options['jsMinPath'];
-	const jsPath = options['jsPath'];
 	const jsName = (options['jsName'] === undefined) ? 'main.min' : options['jsName'];
-	const cssPath = options['cssPath'];
-	const scssPath = options['scssPath'];
 	const sources = (options['outputStyle'] === undefined) ? true : options['sources'];
 	const outputStyle = (options['outputStyle'] === undefined) ? 'nested' : options['outputStyle'];
-	const imgMinPath = options['imgMinPath'];
 	const imgPath = options['imgPath'];
-	const proxyPath = options['proxyPath'];
 	const colorStart = '\x1b[36m';
 	const colorEnd = '\x1b[0m';
 	const defaultPath = './gulpfile.js'; // default path is used to trigger a radom gulp call back to use notify easyer
@@ -136,9 +130,9 @@ module.exports = function( options ) {
 		'js-compile',
 		() => {
 			const jsFiles = [
-				jsPath + '/*/*.js',
-				jsPath + '/*.js',
-				'!' + jsMinPath + '/' + jsName + '.js'
+				options['jsPath'] + '/*/*.js',
+				options['jsPath'] + '/*.js',
+				'!' + options['jsMinPath'] + '/' + jsName + '.js'
 			];
 			return gulp.src(jsFiles)
 				.pipe(babel({
@@ -149,9 +143,9 @@ module.exports = function( options ) {
 				.pipe( concat( jsName + '.js' ) )
 				.pipe( uglify() )
 				.pipe( sourcemaps.write( '.' ) )
-				.pipe( gulp.dest( jsMinPath ) ) ;
+				.pipe( gulp.dest( options['jsMinPath'] ) ) ;
 		},
-		( jsPath === undefined || jsMinPath === undefined ),
+		( options['jsPath'] === undefined || options['jsMinPath'] === undefined ),
 		'JS Compiled',
 		'Compiled file: <%= file.relative %> \n\r <%= options.date %>!'
 	);
@@ -159,7 +153,7 @@ module.exports = function( options ) {
 	taskBuilder(
 		'scss-compile',
 		() => {
-			return gulp.src( scssPath + '/**/*.scss' )
+			return gulp.src( options['scssPath'] + '/**/*.scss' )
 				.pipe( sourcemaps.init() )
 				.pipe(
 					sass({
@@ -173,10 +167,32 @@ module.exports = function( options ) {
 					})
 				)
 				.pipe( sourcemaps.write( '.' ) )
-				.pipe( gulp.dest( cssPath ) );
+				.pipe( gulp.dest( options['cssPath'] ) );
 		},
-		( cssPath === undefined || scssPath === undefined ),
+		( options['cssPath'] === undefined || options['scssPath'] === undefined ),
 		'SCSS Compiled',
+		'Compiled file: <%= file.relative %> \n\r <%= options.date %>!'
+	);
+
+	taskBuilder(
+		'html-concat',
+		() => {
+			for ( let key in options['htmlPages'] )
+			{
+				gulp.src( options['htmlPath'] + options['htmlPages'][key] )
+					.pipe( plumber() )
+					.pipe( concat( key ) )
+					.pipe(
+						htmlmin({
+							collapseWhitespace: true
+						})
+					)
+					.pipe( gulp.dest( options['htmlMinPath'] ) );
+			}
+			return defaultCB();
+		},
+		( options['htmlPages'] === undefined || options['htmlMinPath'] === undefined || options['htmlPath'] === undefined ),
+		'Html compiled',
 		'Compiled file: <%= file.relative %> \n\r <%= options.date %>!'
 	);
 
@@ -188,7 +204,7 @@ module.exports = function( options ) {
 				imgPath + '/*'
 			];
 			gulp.src( imgPath )
-				.pipe( clean( imgMinPath ) );
+				.pipe( clean( options['imgMinPath'] ) );
 			return gulp.src( imgFiles )
 				.pipe( imagemin( [
 					imagemin.gifsicle({
@@ -210,9 +226,9 @@ module.exports = function( options ) {
 						]
 					})
 				]))
-				.pipe( gulp.dest( imgMinPath ) );
+				.pipe( gulp.dest( options['imgMinPath'] ) );
 		},
-		( imgPath === undefined || imgMinPath === undefined ),
+		( imgPath === undefined || options['imgMinPath'] === undefined ),
 		'Images Minimized',
 		'Optimized file: <%= file.relative %> \n\r <%= options.date %>!'
 	);
@@ -221,21 +237,21 @@ module.exports = function( options ) {
 		'browser-sync',
 		() => {
 			return browserSync.init({
-				proxy: proxyPath
+				proxy: options['imgPath']
 			});
 		},
-		( proxyPath === undefined )
+		( options['imgPath'] === undefined )
 	);
 
 	taskBuilder(
 		'watch',
 		() => {
-			if( cssPath !== undefined && scssPath !== undefined )
+			if( options['cssPath'] !== undefined && options['scssPath'] !== undefined )
 			{
 				gulp.watch(
 					[
-						scssPath + '/*/*.scss',
-						scssPath + '/*.scss'
+						options['scssPath'] + '/*/*.scss',
+						options['scssPath'] + '/*.scss'
 					],
 					gulp.series([
 						'scss-compile',
@@ -243,12 +259,12 @@ module.exports = function( options ) {
 					])
 				);
 			}
-			if( jsPath !== undefined && jsMinPath !== undefined )
+			if( options['jsPath'] !== undefined && options['jsMinPath'] !== undefined )
 			{
 				gulp.watch(
 					[
-						jsPath + '/*/*.js',
-						jsPath + '/*.js'
+						options['jsPath'] + '/*/*.js',
+						options['jsPath'] + '/*.js'
 					],
 					gulp.series([
 						'js-compile',
@@ -256,7 +272,23 @@ module.exports = function( options ) {
 					])
 				);
 			}
-			if( imgPath !== undefined && imgMinPath !== undefined )
+			if( options['htmlPages'] === undefined || options['htmlMinPath'] === undefined || options['htmlPath'] === undefined )
+			{
+				gulp.watch(
+					[
+						options['htmlPath'] + '/*/*.html',
+						options['htmlPath'] + '/*.html',
+						options['htmlPath'] + '/*/*.htm',
+						options['htmlPath'] + '/*.txt',
+						options['htmlPath'] + '/*.svg'
+					],
+					gulp.series([
+						'html-compile',
+						'browser-sync'
+					])
+				);
+			}
+			if( imgPath !== undefined && options['imgMinPath'] !== undefined )
 			{
 				gulp.watch(
 					[
@@ -271,7 +303,7 @@ module.exports = function( options ) {
 			}
 			return defaultCB();
 		},
-		( proxyPath === undefined ),
+		( options['imgPath'] === undefined ),
 		'Watch started',
 		'Im watching for any assets modification.'
 	);
