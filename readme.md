@@ -4,10 +4,12 @@
 
 
 > OyanaChan is a rebuild version of [gulp-oyana](https://github.com/Oyana/oyanachan/tree/gulp-oyana).
+
 OyanaChan is made for:
 * Node > 12
 * NPM > 6
 * Gulp > 4
+
 If you have to used older teck please consider used [gulp-oyana](https://github.com/Oyana/oyanachan/tree/gulp-oyana) insted.
 
 ## How to install
@@ -27,7 +29,8 @@ If you have to used older teck please consider used [gulp-oyana](https://github.
 In your `gulpfile.js`.
 
 	var oyana = require('oyanachan');
-	var options = {
+
+	oyana({
 		"jsMinPath" : "./public/js",
 		"jsPath" : "./resources/js",
 		"jsName" : "main.min",
@@ -37,8 +40,7 @@ In your `gulpfile.js`.
 		"imgMinPath" : "./public/img",
 		"imgPath" : "./resources/img",
 		"proxyPath" : "http://localhost"
-	}
-	oyana( options );
+	});
 
 Use only the options you *need*!
 
