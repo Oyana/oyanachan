@@ -298,8 +298,8 @@ module.exports = function( options ) {
 			'js-compile-silent',
 			'scss-compile-silent',
 			'img-minimize-silent',
-			'watch-silent'
-			'cofee',
+			'watch-silent',
+			'cofee'
 		]
 	);
 
