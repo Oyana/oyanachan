@@ -27,22 +27,39 @@ If you have to used older teck please consider used [gulp-oyana](https://github.
 ## How to use
 
 In your `gulpfile.js`.
+> Use only the options you **need**!
 
+```javascript
 	var oyana = require('oyanachan');
 
 	oyana({
-		"jsMinPath" : "./public/js",
-		"jsPath" : "./resources/js",
-		"jsName" : "main.min",
-		"cssPath" : "./public/css",
-		"scssPath" : "./resources/scss",
-		"outputStyle" : "compressed",
-		"imgMinPath" : "./public/img",
-		"imgPath" : "./resources/img",
-		"proxyPath" : "http://localhost"
+		'jsMinPath' : './public/js',
+		'jsPath' : './resources/js',
+		'jsName' : 'main.min',
+		'cssPath' : './public/css',
+		'scssPath' : './resources/scss',
+		'outputStyle' : 'compressed',
+		'imgMinPath' : './public/img',
+		'imgPath' : './resources/img',
+		'htmlMinPath' : './htmlMin',
+		'htmlPath' : './html',
+		'htmlPages' : {
+			'index.html':[
+				'html/head.inc.html',
+				'html/header.inc.html',
+				'html/home.inc.html',
+				'html/footer.inc.html',
+				'html/foot.inc.html'
+			]
+		},
+		'proxyPath' : 'http://localhost'
 	});
-
-Use only the options you *need*!
+```
+   If you dont need js complation remove `{jsMinPath, jsPath, jsName}`.
+   If you dont need scss complation remove `{scssPath, cssPath, outputStyle}`.
+   If you dont need images complation remove `{imgMinPath, imgPath}`.
+   If you dont need browser sync remove `{proxyPath}`.
+   If you dont need browser sync remove `{proxyPath}`.
 
 ## Command line:
 
